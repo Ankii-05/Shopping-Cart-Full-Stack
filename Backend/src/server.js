@@ -5,6 +5,9 @@ let express = require('express');
 let app = express();
 app.use(express.json());
 
+const router = require('./routes/routes.js')
+app.use('/',router);
+
 // MongoDB Connection 
 mongoose.connect(`mongodb+srv://ankitkushwah6195:Ankit%402003@cluster0.cuexyu3.mongodb.net/Shopping-Cart`)
 .then(()=> console.log(`Database connected successfully`))

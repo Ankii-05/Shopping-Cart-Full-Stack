@@ -39,5 +39,6 @@ let userSchema = new mongoose.Schema({
 },
 {
     timestamps:true,
-})
+});
+
 module.exports = new mongoose.model("user-Schema", userSchema);
