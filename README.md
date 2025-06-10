@@ -7,10 +7,14 @@ productModel
 CartModel
 OrderModel
 
-controller
+controller--
 userController
 productController
 CartController
 OrderController
 
-userController -- Add , get, update, delete
+userController --
+AddUsers
+GetUsers
+UpdateUsers
+DeleteUsers
