@@ -116,7 +116,7 @@ const updateUser = async (req,res)=>{
         }
 
         if(Object.keys(userData).length === 0){
-            return res.status(400).json({msg:"Bad Request, Data not found"})
+            return res.status(404).json({msg:"Bad Request, Data not found"})
         }
         let {userName, userEmail, userContact, userPassword, userAddress, userGender, userAge} = userData;
 
