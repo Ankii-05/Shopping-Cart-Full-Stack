@@ -22,4 +22,7 @@ router.delete('/deleteProduct/:id',deleteProduct);
 router.get('/getProductsByCategory', getProductsByCategory );
 router.get('/getProductsByDelivery', getProductsByFreeDeliveryOrNot);
 
+
+
+
 module.exports = router;

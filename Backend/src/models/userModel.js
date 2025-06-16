@@ -31,6 +31,7 @@ let userSchema = new mongoose.Schema({
         type:String,
         required:true,
         enum:['male','female','other'],
+        lowercase:true,
     },
     userAge:{
         type:Number,
