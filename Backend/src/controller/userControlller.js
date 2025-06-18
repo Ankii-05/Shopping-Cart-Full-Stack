@@ -2,6 +2,7 @@ const userModel = require('../models/userModel.js');
 const mongoose = require('mongoose');
 const { isValid, isValidName, isValidEmail, isValidPhone, isValidPassword, validGenders } = require('./validator.js')
 const bcrypt = require('bcrypt');
+let jwt = require("jsonwebtoken");
 
 // Add users 
 const addUsers = async (req, res) => {
@@ -237,7 +238,6 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         let userId = req.params.id;
-        let users = req.body;
 
         // User Id Validation
         if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -256,4 +256,44 @@ const deleteUser = async (req, res) => {
     }
 }
 
-module.exports = { addUsers, getUsers, updateUser, deleteUser };
+
+// Login
+const loginUser = async (req,res)=>{
+    try {
+        let {userEmail, userPassword} = req.body;
+
+        if (Object.keys(req.body).length === 0) {
+        return res.status(400).json({ msg: "Bad Request, No Data Provided" });
+    }
+
+        if (!isValid(userEmail)) {
+                return res.status(400).json({ msg: "Email is required" })
+        }
+        if (!isValid(userPassword)) {
+                return res.status(400).json({ msg: "Password is required" })
+        }
+
+        let user = await userModel.findOne({userEmail});
+        if(!user){
+            return res.status(404).jsong({msg:"User Not Found with this email"})
+        }
+        let matchedUser = await bcrypt.compare(userPassword, user.userPassword);
+        if(!matchedUser){
+            return res.status(401).json({msg:"Incorrect Password"})
+        }
+        let token = jwt.sign(
+            {userId: user._id, email:user.userEmail},
+            "my-secret-key",
+            {expiresIn:"1h"}
+            );
+        return res.status(200).json({msg:"Login Successful",token});
+    
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({msg:"Internal Server Error"})
+        
+    }
+}
+
+module.exports = { addUsers, getUsers, updateUser, deleteUser , loginUser};
+

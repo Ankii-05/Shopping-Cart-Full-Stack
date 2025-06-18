@@ -4,12 +4,15 @@ const router = express.Router();
 
 
 // USER Controller Routes
-const {addUsers, getUsers, updateUser, deleteUser} = require('../controller/userControlller.js');
+const {addUsers, getUsers, updateUser, deleteUser, loginUser} = require('../controller/userControlller.js');
 
 router.post('/addUsers', addUsers);
 router.get('/getUsers', getUsers);
 router.put('/updateUser/:id', updateUser)
 router.delete('/deleteUser/:id', deleteUser)
+
+// User Login
+router.post('/login',loginUser);
 
 
 // PRODUCT Controller Routes
