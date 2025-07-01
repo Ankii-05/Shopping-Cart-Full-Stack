@@ -1,6 +1,6 @@
 const userModel = require('../models/userModel.js');
 const mongoose = require('mongoose');
-const { isValid, isValidName, isValidEmail, isValidPhone, isValidPassword, validGenders } = require('./validator.js')
+const { isValid, isValidName, isValidEmail, isValidPhone, isValidPassword } = require('./validator.js')
 const bcrypt = require('bcrypt');
 let jwt = require("jsonwebtoken");
 
@@ -74,6 +74,7 @@ const addUsers = async (req, res) => {
         if (!isValid(userGender)) {
             return res.status(400).json({ msg: "Gender is required" })
         }
+        const validGenders = ['male', 'female', 'other'];
         if (!validGenders.includes(userGender.trim().toLowerCase())) {
             return res.json({ msg: "Invalid Gender" })
         }
@@ -122,6 +123,11 @@ const updateUser = async (req, res) => {
     try {
         let userId = req.params.id;
         let userData = req.body;
+
+        let loggedInUserId = req.user.userId;
+        if(userId !== loggedInUserId){
+            return res.status(403).json({msg:"Access Denied! Invalid User Id!!!"})
+        }
 
         // user Id validation
         if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -260,6 +266,8 @@ const deleteUser = async (req, res) => {
 // Login
 const loginUser = async (req,res)=>{
     try {
+        // console.log(req.headers);
+        
         let {userEmail, userPassword} = req.body;
 
         if (Object.keys(req.body).length === 0) {
@@ -277,14 +285,15 @@ const loginUser = async (req,res)=>{
         if(!user){
             return res.status(404).jsong({msg:"User Not Found with this email"})
         }
-        let matchedUser = await bcrypt.compare(userPassword, user.userPassword);
+        let matchedUser = await bcrypt.compare(userPassword, user.userPassword);//(user Enterred password, comapring password)
         if(!matchedUser){
             return res.status(401).json({msg:"Incorrect Password"})
         }
         let token = jwt.sign(
-            {userId: user._id, email:user.userEmail},
+            {userId: user._id,
+             email:user.userEmail},
             "my-secret-key",
-            {expiresIn:"1h"}
+            {expiresIn:"24h"}
             );
         return res.status(200).json({msg:"Login Successful",token});
     

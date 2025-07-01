@@ -43,3 +43,29 @@ MiddleWare --
 Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named next.
 
 
+Task --- 
+Frontend 
+React Install
+Navbar (Routing - perform)
+Home Component - blank
+Add Products - form according to model keys (product model)
+About
+Contact
+Login -- email and password buttton ,does not have an account (sign Up)
+sign Up -- form (already have an account)
+Cart icon 
+My Profile
+
+What is CORS --
+Cross Origin Resource 
+is a security feature implemented by web browser to control how web pages can access resources from different domains
+
+CORS is also used for set port code for request from frontend
+and also 
+
+
+
+Optional Chaining --
+for using nested object 
+for find key in nested objects
+

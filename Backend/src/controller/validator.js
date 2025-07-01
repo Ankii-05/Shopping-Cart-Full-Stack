@@ -6,10 +6,10 @@ const isValid = (value) =>{
 return true;
 }
 
-const validGenders = ['male', 'female', 'other'];
 
 
-const validCategory= ["Electronics", "Clothes", "Food", "Books", "Furniture"];
+const isValidURL = (url) => /^(https?:\/\/)[^\s/$.?#].[^\s]*$/.test(url);
+
 
 const isValidName =(name)=> /^[a-zA-Z ]*$/.test(name);
 const isValidEmail =(email)=> /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
@@ -17,5 +17,5 @@ const isValidPhone =(phone)=> /^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}
 let isValidPassword = (password)=>
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{6,20}$/.test(password);
 
-module.exports = { isValid , isValidName , isValidEmail, isValidPhone, isValidPassword, validGenders, validCategory};
+module.exports = { isValid , isValidName , isValidEmail, isValidPhone, isValidPassword, isValidURL};
 

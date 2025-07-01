@@ -1,6 +1,6 @@
 const productModel = require('../models/productModel.js')
 const mongoose = require('mongoose');
-const {isValid, validCategory} = require('./validator.js');
+const {isValid, isValidURL} = require('./validator.js');
 // Add Products
 
 const addProducts = async (req, res) => {
@@ -10,10 +10,13 @@ const addProducts = async (req, res) => {
             return res.status(400).json({ msg: "Bad Request, No data provided" })
         }
         // Product Data Validations
-        const {productImage, productName, productDescription, productCategory, productPrice, productRating, isFreeDelivery } = productData;
+        const {productImage, productName, productDescription, productCategory, price, productRating, isFreeDelivery } = productData;
         // Product Image Validation
         if(!isValid(productImage)){
             return res.status(400).json({ msg: "Product Image URL is required" })
+        }
+        if(!isValidURL(productImage)){
+            return res.status(400).json({msg:"Please Provide correct URL"})
         }
         // Product Name Validation
         if(!isValid(productName)){
@@ -27,11 +30,13 @@ const addProducts = async (req, res) => {
         if(!isValid(productCategory)){
             return res.status(400).json({ msg: "Product Category is required" })
         }
+        const validCategory= ["Electronics", "Clothes", "Food", "Books", "Furniture"];
+
         if(!validCategory.includes(productCategory)){
             return res.status(400).json({ msg: "Product Category is invalid " })    
         }
         // product Price validation
-        if(!isValid(productPrice)){
+        if(!isValid(price)){
             return res.status(400).json({ msg: "Product Price is required" })
         }
         // product Rating Validation
@@ -39,11 +44,20 @@ const addProducts = async (req, res) => {
             return res.status(400).json({ msg: "Product Rating is required" })
         }
         let min = 0;
-        let max = 5;
+        let max = 6;
 
         if (productRating <= min || productRating >= max) {
             return res.status(400).json({ msg: "Product Rating should be between 0 to 5" });
         }
+
+        // isFreeDelivery Validation
+        if (productData.hasOwnProperty(isFreeDelivery)) {
+      if (typeof isFreeDelivery !== "boolean") {
+        return res
+          .status(400)
+          .json({ msg: "isFreeDelivery must be a boolean value" });
+      }
+    }
         let products = await productModel.create(productData);
         return res.status(201).json({ msg: "Product Added Successfully", products })
 

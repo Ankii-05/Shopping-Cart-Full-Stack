@@ -21,7 +21,7 @@ let productSchema = new mongoose.Schema({
         required:true,
         enum:["Electronics", "Clothes", "Food", "Books", "Furniture"],
     },
-    productPrice:{
+    price:{
         type:Number,
         required:true,
     },
