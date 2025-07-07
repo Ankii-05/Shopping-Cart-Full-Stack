@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from 'react';
+import '../Style/model.css'
 function Login({closeModel, openSignUpModel}) {
   
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email:"",
-    password:"",
+    userEmail:"",
+    userPassword:"",
   });
 
   const handleChange = (e) =>{
@@ -30,31 +31,31 @@ function Login({closeModel, openSignUpModel}) {
   }
 
   return(
-    <div>
-      <div>
-        <span onClick={closeModel}>&times;</span>
+    <div className='auth-modal-overlay'>
+      <div className='auth-modal-content'>
+        <span className='auth-close-button' onClick={closeModel}>&times;</span>
         <h3>Login To Shopping Cart</h3>
         <form action="" onSubmit={handleSubmit}>
           <input 
             type="email" 
-            name="email" 
+            name="userEmail" 
             placeholder='Enter Email'
-            value={formData.email}
+            value={formData.userEmail}
             onChange={handleChange}
            />
           <input 
            type="password" 
-           name="password" 
+           name="userPassword" 
            placeholder='Enter Password'
-           value={formData.password}
+           value={formData.userPassword}
            onChange={handleChange}  
           />
           <button type='submit'>Login</button>
         </form>
-        <p>
+        <p className='auth-switch-text'>
           Don't have an account?{" "}
           <span
-            // style={{color:'blue', cursor:'pointer'}}
+            style={{color:'blue', cursor:'pointer'}}
             onClick={()=>{
               closeModel();
               openSignUpModel();

@@ -4,6 +4,7 @@ const router = require("./router/routes.js")
 
 const cors = require('cors');
 
+const app = express();
 
 
 let middleware1 = (req,res,next)=>{
@@ -18,10 +19,9 @@ let middleware1 = (req,res,next)=>{
 // }
 
 
-const app = express();
 app.use(cors())
-app.use("/", router)
 app.use(express.json());
+app.use("/", router)
 
 mongoose
   .connect(
@@ -32,6 +32,6 @@ mongoose
 
 app.listen(4001, (err) => {
   err
-    ? console.log("Server Not Connected")
+    ? console.log("Server Not Connected",err)
     : console.log("Server is Running at port 4001");
 });

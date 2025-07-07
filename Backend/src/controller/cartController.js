@@ -6,31 +6,24 @@ const mongoose = require("mongoose");
 // Add To Cart
 const addToCart = async (req, res) => {
   try {
-    let userId = req.user.userId;
-
+    const userId = req.user.userId;
     let { productId, quantity } = req.body;
-    quantity = Number(quantity); // Ensure it's a number
 
-    // productId Validation
-    if (!isValid(productId) || !mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({ msg: "Valid ProductId is Required" });
+    quantity = Number(quantity);
+    if (!quantity || !Number.isInteger(quantity) || quantity < 1) {
+      return res.status(400).json({ msg: "Valid integer quantity ≥ 1 is required." });
     }
 
-    // Quantity Validation
-    if (
-      isNaN(quantity) ||
-      quantity < 1 ||
-      !Number.isInteger(quantity)
-    ) {
-      return res.status(400).json({ msg: "Valid Quantity is Required" });
+    if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ msg: "Valid productId is required." });
     }
 
-    let product = await productModel.findById(productId);
-
+    const product = await productModel.findById(productId).select("price");
     if (!product) {
-      return res.status(404).json({ msg: "Product Not Found" });
+      return res.status(404).json({ msg: "Product not found." });
     }
 
+    console.log("price is here",product)
 
     let cart = await cartModel.findOne({ userId });
 
@@ -39,39 +32,34 @@ const addToCart = async (req, res) => {
         userId,
         items: [{ productId, quantity }],
         totalItems: 1,
-        totalPrice: productId.price * quantity,
+        totalPrice: product.price * quantity,
       });
     } else {
-      let found = false;
-
-      cart.items = cart.items.map((item) => {
-        if (item.productId.toString() === productId) {
-          found = true;
-          item.quantity += quantity;
-        }
-        return item;
-      });
-
-      if (!found) {
+      const existingItem = cart.items.find(item => item.productId.toString() === productId);
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
         cart.items.push({ productId, quantity });
       }
 
       cart.totalItems = cart.items.length;
 
       const populated = await cart.populate("items.productId", "price");
-      cart.totalPrice = populated.items.reduce(
-        (sum, item) => sum + item.productId.price* item.quantity,
-        0
-      );
+      cart.totalPrice = populated.items.reduce((sum, { productId: prod, quantity: qty }) => {
+  if (!prod) return sum; // skip null product
+  return sum + prod.price * qty;
+}, 0);
+
     }
 
     await cart.save();
-    return res.status(200).json({ msg: "Item Added To Cart", cart });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ msg: "Internal Server Error", error });
+    return res.status(200).json({ msg: "Item added to cart", cart });
+  } catch (err) {
+    console.error("addToCart error:", err);
+    return res.status(500).json({ msg: "Internal server error" });
   }
 };
+
 
 // Get Cart
 const getCart = async (req, res) => {
